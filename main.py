@@ -1,4 +1,5 @@
 
+from random import randint
 from dotenv import load_dotenv
 from time import sleep
 from multiprocessing import Pool
@@ -16,43 +17,29 @@ import re
 
  
 excel = openpyxl.load_workbook("data.xlsx", data_only=True)
+session = requests.Session()
 
- 
+
 def getData(index): 
+    rand_value = randint(10, 30)
+    time.sleep(rand_value*0.1)
     url = 'https://pcmap.place.naver.com/restaurant/' + str(index)
-    html = requests.get(url)
-    sleep(0.5)
+    html = session.get(url,headers={'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9','User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'})
+    print(html.status_code)
     while(html.status_code!=200):
-        print(html.status_code)
-        html = requests.get(url)
-        sleep(0.5)
-    
-    soup = BeautifulSoup(html.content,'html.parser',from_encoding='utf-8')
-    if len( soup(text=re.compile('_3ocDE')))>0:
-        return soup.select('span._3ocDE')[0].text
-    
+        rand_value = randint(10, 30)
+        time.sleep(rand_value*0.1)
+        print('다시하는 중')
+        html = session.get(url,headers={'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9','User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'})
 
-
- 
-
-# async def getData(index): 
-#     url = 'https://pcmap.place.naver.com/restaurant/' + str(index)
-#     async with ClientSession() as session:
-#         async with session.get(url,headers = {'User-agent': 'your bot 0.1'}) as response:
-#             r = await response.read()
-#             sleep(1)
-#             print(response.status)
-#             print(index)
-#             if response.status != 200:
-#                 await getData(index)
-#                 # return None
-#             else:
-#                 soup = BeautifulSoup(r,'html.parser',from_encoding='utf-8')
-#                 # print(index)
-#                 # print(soup(text=re.compile('_3ocDE')))
-#                 if len( soup(text=re.compile('_3ocDE')))>0:
-#                     return soup.select('span._3ocDE')[0].text
-    
+    if html.text.find("og:title")!=-1:
+        soup = BeautifulSoup(html.content,'html.parser',from_encoding='utf-8')
+        if len(soup(text=re.compile('_3ocDE')))>0:
+            return soup.select('span._3ocDE')[0].text
+        else:
+            return None
+    else:
+        return None
 
 
 def incrementID():
@@ -95,11 +82,11 @@ def main(value,):
         
 def main_exec(value,):
     thread_list=list()
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        for index in range(value*100,(value+1)*100):
+    with ThreadPoolExecutor(max_workers=24) as executor:
+        for index in range(value*100000,(value+1)*100000):
             thread_list.append(executor.submit(main(index,)))
-        for execution in concurrent.futures.as_completed(thread_list):
-            incrementID()
+        # for execution in concurrent.futures.as_completed(thread_list):
+        #     incrementID()
             
 
 
@@ -110,8 +97,8 @@ if __name__ == "__main__":
     currentId = loadCurrentIdFromEnv()
     addData = ''
     start_time = time.time()
-    with Pool(processes=8) as pool:  
-        pool.map(main_exec,[0,1,2,3],)
+    with Pool(processes=10) as pool:  
+        pool.map(main_exec,[0,1,2,3,4,5,6,7,8,9],)
     
 
 
