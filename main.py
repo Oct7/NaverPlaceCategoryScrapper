@@ -82,7 +82,7 @@ def main(value,):
         
 def main_exec(value,):
     thread_list=list()
-    with ThreadPoolExecutor(max_workers=24) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         for index in range(value*100000,(value+1)*100000):
             thread_list.append(executor.submit(main(index,)))
         # for execution in concurrent.futures.as_completed(thread_list):
