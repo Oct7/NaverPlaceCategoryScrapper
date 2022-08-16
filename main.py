@@ -21,14 +21,14 @@ session = requests.Session()
 
 
 def getData(index): 
-    rand_value = randint(10, 30)
+    rand_value = randint(20, 30)
     print(rand_value*0.1)
     sleep(rand_value*0.1)
     url = 'https://pcmap.place.naver.com/restaurant/' + str(index)
     html = session.get(url,headers={'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9','User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'})
     print(html.status_code)
     while(html.status_code!=200):
-        rand_value = randint(10, 30)
+        rand_value = randint(20, 30)
         print(rand_value*0.1)
         print(html.status_code)
         sleep(rand_value*0.1)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     currentId = loadCurrentIdFromEnv()
     addData = ''
     start_time = time.time()
-    with Pool(processes=10) as pool:  
+    with Pool(processes=5) as pool:  
         pool.map(main_exec,[0,1,2,3,4],)
     
 
